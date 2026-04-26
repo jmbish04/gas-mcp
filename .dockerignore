@@ -1,0 +1,50 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+.gitkeep
+
+# Node modules (will be installed in container)
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+README*
+LICENSE
+docs/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+test/
+*.test.js
+*.spec.js
+.coverage/
+coverage/
+
+# Build artifacts
+dist/
+build/
+
+# Demo files
+demo/
+
+# Commands (development tools)
+commands/

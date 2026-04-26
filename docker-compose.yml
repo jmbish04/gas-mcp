@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  google-appscript-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: google-appscript-mcp-server
+    environment:
+      - NODE_ENV=production
+      - GOOGLE_APP_SCRIPT_API_CLIENT_ID=${GOOGLE_APP_SCRIPT_API_CLIENT_ID}
+      - GOOGLE_APP_SCRIPT_API_CLIENT_SECRET=${GOOGLE_APP_SCRIPT_API_CLIENT_SECRET}
+    volumes:
+      # Persist OAuth tokens
+      - tokens:/home/app/.config/google-apps-script-mcp
+    restart: unless-stopped
+    # For MCP stdio transport, we need to keep the container running
+    stdin_open: true
+    tty: true
+
+volumes:
+  tokens:

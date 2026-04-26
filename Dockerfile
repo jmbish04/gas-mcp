@@ -1,9 +1,27 @@
-FROM node:22.12-alpine AS builder
+# Use Node 22 slim image for smaller footprint
+FROM node:22-slim
 
+# Set working directory
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm install
 
+# Copy package files first for better caching
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy the MCP server code
 COPY . .
 
-ENTRYPOINT ["node", "mcpServer.js"]
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash app \
+    && mkdir -p /home/app/.config/google-apps-script-mcp \
+    && chown -R app:app /app /home/app
+USER app
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV HOME=/home/app
+
+# Default command - MCP server typically runs with stdio transport
+CMD ["node", "mcpServer.js"]
