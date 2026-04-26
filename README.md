@@ -16,6 +16,7 @@ This MCP server provides comprehensive integration with the Google Apps Script A
 - [Quick Start Guide](#quick-start-guide)
 - [Detailed Setup Instructions](#detailed-setup-instructions)
 - [Available Tools](#available-tools)
+- [Script Authorization](#script-authorization)
 - [MCP Client Configuration](#mcp-client-configuration)
 - [Troubleshooting](#troubleshooting)
 - [Advanced Usage](#advanced-usage)
@@ -91,22 +92,11 @@ npm start
 
 ## 📖 Detailed Setup Instructions
 
-### Step 1: Clone and Install
+> If you haven't cloned the repository and installed dependencies yet, follow the [Quick Start Guide](#quick-start-guide) first.
 
-**Clone the repository:**
-```bash
-git clone https://github.com/mohalmah/google-apps-script-mcp-server.git
-cd google-apps-script-mcp-server
-```
+### Step 1: Google Cloud Console Setup
 
-**Install dependencies:**
-```bash
-npm install
-```
-
-### Step 2: Google Cloud Console Setup
-
-#### 2.1 Create or Select a Google Cloud Project
+#### 1.1 Create or Select a Google Cloud Project
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Click the project dropdown at the top
@@ -116,7 +106,7 @@ npm install
    - Note your Project ID (you'll need this)
    - Click **"Create"**
 
-#### 2.2 Enable Required APIs
+#### 1.2 Enable Required APIs
 
 1. In the Google Cloud Console, navigate to **APIs & Services** → **Library**
 2. Search for and enable the following APIs:
@@ -130,7 +120,7 @@ npm install
 3. Click **"Enable"**
 4. Wait for the API to be enabled (may take a few minutes)
 
-#### 2.3 Configure OAuth Consent Screen
+#### 1.3 Configure OAuth Consent Screen
 
 1. Go to **APIs & Services** → **OAuth consent screen**
 2. Choose **External** (unless you're in a Google Workspace organization)
@@ -158,7 +148,7 @@ npm install
 2. Add your Gmail address as a test user
 3. Click **"Save and Continue"**
 
-#### 2.4 Create OAuth 2.0 Credentials
+#### 1.4 Create OAuth 2.0 Credentials
 
 1. Go to **APIs & Services** → **Credentials**
 2. Click **"+ CREATE CREDENTIALS"** → **"OAuth 2.0 Client IDs"**
@@ -175,9 +165,9 @@ npm install
    - Client ID looks like: `1234567890-abcdefghijklmnop.apps.googleusercontent.com`
    - Client Secret looks like: `GOCSPX-abcdefghijklmnopqrstuvwxyz`
 
-### Step 3: Configure Environment Variables
+### Step 2: Configure Environment Variables
 
-#### 3.1 Create .env File
+#### 2.1 Create .env File
 
 Create a `.env` file in your project root:
 
@@ -189,7 +179,7 @@ type nul > .env
 touch .env
 ```
 
-#### 3.2 Add OAuth Credentials
+#### 2.2 Add OAuth Credentials
 
 Edit the `.env` file and add your credentials:
 
@@ -206,9 +196,9 @@ LOG_LEVEL=info
 - Replace `your_client_id_here` with your Client ID
 - Replace `your_client_secret_here` with your Client Secret
 
-### Step 4: OAuth Authentication Setup
+### Step 3: OAuth Authentication Setup
 
-#### 4.1 Run OAuth Setup
+#### 3.1 Run OAuth Setup
 
 Execute the OAuth setup script:
 
@@ -225,7 +215,7 @@ npm run setup-oauth
 6. Stores the refresh token securely in your OS credential store
 7. Tests the token by making a test API call
 
-#### 4.2 Grant Permissions
+#### 3.2 Grant Permissions
 
 When your browser opens:
 
@@ -237,16 +227,16 @@ When your browser opens:
 3. **Click "Continue"** or **"Allow"**
 4. **You should see**: "OAuth setup completed successfully!"
 
-#### 4.3 Verify Token Storage
+#### 3.3 Verify Token Storage
 
 The setup process stores tokens securely:
 - **Windows**: Windows Credential Manager
 - **macOS**: Keychain Access
 - **Linux**: Secret Service API (GNOME Keyring/KDE Wallet)
 
-### Step 5: Test Your Setup
+### Step 4: Test Your Setup
 
-#### 5.1 Test the MCP Server
+#### 4.1 Test the MCP Server
 
 ```bash
 npm start
@@ -259,7 +249,7 @@ OAuth tokens loaded successfully
 Server ready to handle MCP requests
 ```
 
-#### 5.2 Test with Available Commands
+#### 4.2 Test with Available Commands
 
 ```bash
 # List all available tools
@@ -469,6 +459,31 @@ This MCP server provides 16 comprehensive tools for Google Apps Script managemen
 1. Use `script-projects-deployments-list` to see all deployments
 2. Use `script-projects-deployments-update` to update production configs
 3. Use `script-scripts-run` to trigger automated workflows
+
+## ⚠️ Script Authorization
+
+When a script uses Google services such as `DriveApp`, `SpreadsheetApp`, `GmailApp`, or `CalendarApp`, it must be manually authorized before the deployed web app will respond correctly. The MCP server's API deployment does **not** trigger Google's OAuth consent flow.
+
+**If your deployed web app returns "Access Denied" or "You need access"**, complete these steps once after deployment:
+
+1. Open the script in the Apps Script editor:
+   ```
+   https://script.google.com/d/{SCRIPT_ID}/edit
+   ```
+   *(Replace `{SCRIPT_ID}` with the ID returned by `script-projects-create` or `script-projects-get`.)*
+
+2. Click **Run** on any function that calls a Google service (e.g., `doGet`).
+
+3. When prompted, click **Review Permissions**.
+
+4. Complete the Google OAuth consent flow:
+   - Select your Google account
+   - Click **Advanced** → **Go to {project name} (unsafe)**
+   - Click **Allow**
+
+5. Your deployed web app will now work correctly.
+
+> **Note:** This is a Google Apps Script platform requirement and cannot be bypassed via the API.
 
 ## 🌐 Test the MCP Server with Postman
 
@@ -731,58 +746,6 @@ Create a `.vscode/settings.json` file in your project root:
 - **macOS**: `~/Library/Application Support/Code/User/settings.json`
 - **Linux**: `~/.config/Code/User/settings.json`
 
-### 🎯 Quick Configuration Examples
-
-Replace these paths with your actual system paths:
-
-#### For Current Windows Setup:
-```json
-{
-  "mcpServers": {
-    "google-apps-script": {
-      "command": "C:\\nvm4w\\nodejs\\node.exe",
-      "args": ["C:\\Users\\mohal\\Downloads\\google-appscriot-mcp-server\\mcpServer.js"],
-      "env": {
-        "GOOGLE_APP_SCRIPT_API_CLIENT_ID": "your_actual_client_id",
-        "GOOGLE_APP_SCRIPT_API_CLIENT_SECRET": "your_actual_client_secret"
-      }
-    }
-  }
-}
-```
-
-#### For macOS Setup:
-```json
-{
-  "mcpServers": {
-    "google-apps-script": {
-      "command": "/usr/local/bin/node",
-      "args": ["/Users/username/google-apps-script-mcp-server/mcpServer.js"],
-      "env": {
-        "GOOGLE_APP_SCRIPT_API_CLIENT_ID": "your_actual_client_id",
-        "GOOGLE_APP_SCRIPT_API_CLIENT_SECRET": "your_actual_client_secret"
-      }
-    }
-  }
-}
-```
-
-#### For Linux Setup:
-```json
-{
-  "mcpServers": {
-    "google-apps-script": {
-      "command": "/usr/bin/node",
-      "args": ["/home/username/google-apps-script-mcp-server/mcpServer.js"],
-      "env": {
-        "GOOGLE_APP_SCRIPT_API_CLIENT_ID": "your_actual_client_id",
-        "GOOGLE_APP_SCRIPT_API_CLIENT_SECRET": "your_actual_client_secret"
-      }
-    }
-  }
-}
-```
-
 **🔑 Remember to:**
 1. Replace `your_actual_client_id` and `your_actual_client_secret` with your OAuth credentials
 2. Update the paths based on your actual system output from the commands above
@@ -886,6 +849,10 @@ Replace these paths with your actual system paths:
 - Verify the script is shared with your account
 - Check that the required scopes are granted
 - For script execution, ensure the script is deployed and executable
+
+#### 11. "Access Denied" or "You need access" on deployed web app
+**Problem**: Scripts using Google services (`DriveApp`, `SpreadsheetApp`, etc.) require manual authorization before the deployed URL works.
+**Solution**: See the [Script Authorization](#script-authorization) section for step-by-step instructions.
 
 ### Testing Your Configuration
 
