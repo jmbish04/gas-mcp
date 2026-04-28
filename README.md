@@ -1,6 +1,7 @@
 [![MseeP.ai Security Assessment Badge](https://mseep.net/pr/mohalmah-google-appscript-mcp-server-badge.png)](https://mseep.ai/app/mohalmah-google-appscript-mcp-server)
 
 # Google Apps Script MCP Server
+[![smithery badge](https://smithery.ai/badge/@mohalmah/google-appscript-mcp-server)](https://smithery.ai/server/@mohalmah/google-appscript-mcp-server)
 
 **Author**: [mohalmah](https://github.com/mohalmah)  
 **License**: MIT License  
