@@ -414,6 +414,8 @@ This MCP server provides 16 comprehensive tools for Google Apps Script managemen
 }
 ```
 
+**Note**: If your deployment uses Google services like `DriveApp` or `SpreadsheetApp`, you must manually authorize the script in the Apps Script editor before the web app will respond. See [Script Authorization](#script-authorization).
+
 #### 9. `script-projects-deployments-get`
 **Purpose**: Get details of a specific deployment
 **Parameters**:
